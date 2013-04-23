@@ -31,6 +31,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -92,6 +94,7 @@ public class TranslationSynchronizer {
      * Synchronizes bundles and database.
      */
     private void synchronize() {
+        final String bundleCharacterSet = PropertiesUtil.getProperty("translation-site", "bundle-character-set");
         final String[] prefixes = PropertiesUtil.getProperty("translation-site", "bundle-path-prefixes").split(",");
 
         for (final String prefixPart : prefixes) {
@@ -121,7 +124,7 @@ public class TranslationSynchronizer {
             try {
                 baseBundleProperties = new Properties();
                 final FileInputStream baseBundleInputStream = new FileInputStream(baseBundle);
-                baseBundleProperties.load(baseBundleInputStream);
+                baseBundleProperties.load(new InputStreamReader(baseBundleInputStream, bundleCharacterSet));
                 keys = baseBundleProperties.keySet();
                 baseBundleInputStream.close();
             } catch (Exception e) {
@@ -132,8 +135,7 @@ public class TranslationSynchronizer {
             final Map<String, List<String>> missingKeys = new HashMap<String, List<String>>();
 
             for (final File candidate : bundleDirectory.listFiles()) {
-                if (!candidate.equals(baseBundle)
-                        && candidate.getName().startsWith(baseName) && candidate.getName().endsWith(".properties")) {
+                if (candidate.getName().startsWith(baseName) && candidate.getName().endsWith(".properties")) {
 
                     final String name = candidate.getName().split("\\.")[0];
                     final String[] parts = name.split("_");
@@ -156,7 +158,7 @@ public class TranslationSynchronizer {
                         try {
                             final Properties properties = new Properties();
                             final FileInputStream bundleInputStream = new FileInputStream(candidate);
-                            properties.load(bundleInputStream);
+                            properties.load(new InputStreamReader(bundleInputStream, bundleCharacterSet));
                             bundleInputStream.close();
 
                             final TypedQuery<Entry> query = entityManager.createQuery("select e from Entry as e where " +
@@ -171,9 +173,10 @@ public class TranslationSynchronizer {
 
                             for (final Entry entry : entries) {
                                 if (keys.contains(entry.getKey())) {
-                                    if (entry.getValue().length() == 0 && properties.containsKey(entry.getKey()) &&
-                                            ((String) properties.get(entry.getKey())).length() > 0) {
+                                    if (candidate.equals(baseBundle) || (entry.getValue().length() == 0 && properties.containsKey(entry.getKey()) &&
+                                            ((String) properties.get(entry.getKey())).length() > 0)) {
                                         entry.setValue((String) properties.get(entry.getKey()));
+                                        entityManager.persist(entry);
                                     }
 
                                 }
@@ -213,22 +216,22 @@ public class TranslationSynchronizer {
                                 }
 
                             }
+                            entityManager.getTransaction().commit();
 
-                            properties.clear();
-
-                            for (final Entry entry : entries) {
-                                if (keys.contains(entry.getKey())) {
-                                    if (entry.getValue().length() > 0) {
-                                        properties.put(entry.getKey(), entry.getValue());
+                            if (!candidate.equals(baseBundle)) {
+                                properties.clear();
+                                for (final Entry entry : entries) {
+                                    if (keys.contains(entry.getKey())) {
+                                        if (entry.getValue().length() > 0) {
+                                            properties.put(entry.getKey(), entry.getValue());
+                                        }
                                     }
                                 }
+
+                                final FileOutputStream fileOutputStream = new FileOutputStream(candidate, false);
+                                properties.store(new OutputStreamWriter(fileOutputStream, bundleCharacterSet), "");
+                                fileOutputStream.close();
                             }
-
-                            final FileOutputStream fileOutputStream = new FileOutputStream(candidate, false);
-                            properties.store(fileOutputStream, "");
-                            fileOutputStream.close();
-
-                            entityManager.getTransaction().commit();
                         } catch (Exception e) {
                             if (entityManager.getTransaction().isActive()) {
                                 entityManager.getTransaction().rollback();
