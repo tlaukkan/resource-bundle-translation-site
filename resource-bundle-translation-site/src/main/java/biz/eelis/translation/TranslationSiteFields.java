@@ -107,7 +107,7 @@ public final class TranslationSiteFields {
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "path", "Path",
                 TextField.class, null,
-                30, null, String.class, "",
+                250, null, String.class, "",
                 true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "basename", "Basename",
@@ -117,22 +117,22 @@ public final class TranslationSiteFields {
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "language", "Language",
                 TextField.class, null,
-                15, null, String.class, "",
+                25, null, String.class, "",
                 true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "country", "Country",
                 TextField.class, null,
-                15, null, String.class, "",
+                25, null, String.class, "",
                 true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "key", "Key",
                 TextField.class, null,
-                250, null, String.class, "",
+                -1, null, String.class, "",
                 true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "value", "Value",
                 TextField.class, null,
-                -1, null, String.class, "",
+                250, null, String.class, "",
                 false, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "author", "Author",

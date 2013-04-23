@@ -17,16 +17,27 @@ package biz.eelis.translation;
 
 import biz.eelis.translation.model.Entry;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.filter.And;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Table;
+import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 import org.vaadin.addons.sitekit.flow.AbstractFlowlet;
+import org.vaadin.addons.sitekit.grid.FieldDescriptor;
+import org.vaadin.addons.sitekit.grid.FilterDescriptor;
+import org.vaadin.addons.sitekit.grid.FormattingTable;
+import org.vaadin.addons.sitekit.grid.Grid;
 import org.vaadin.addons.sitekit.grid.ValidatingEditor;
 import org.vaadin.addons.sitekit.grid.ValidatingEditorStateListener;
+import org.vaadin.addons.sitekit.util.ContainerUtil;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entry edit flow.
@@ -49,6 +60,8 @@ public final class EntryFlowlet extends AbstractFlowlet implements ValidatingEdi
     private Button saveButton;
     /** The discard button. */
     private Button discardButton;
+    /** The other language keys container. */
+    private LazyEntityContainer container;
 
     @Override
     public String getFlowletKey() {
@@ -69,11 +82,11 @@ public final class EntryFlowlet extends AbstractFlowlet implements ValidatingEdi
     public void initialize() {
         entityManager = getSite().getSiteContext().getObject(EntityManager.class);
 
-        final GridLayout gridLayout = new GridLayout(1, 2);
+        final GridLayout gridLayout = new GridLayout(1, 3);
         gridLayout.setSizeFull();
         gridLayout.setMargin(false);
         gridLayout.setSpacing(true);
-        gridLayout.setRowExpandRatio(1, 1f);
+        gridLayout.setRowExpandRatio(2, 1f);
         setViewContent(gridLayout);
 
         entryEditor = new ValidatingEditor(TranslationSiteFields.getFieldDescriptors(Entry.class));
@@ -102,6 +115,8 @@ public final class EntryFlowlet extends AbstractFlowlet implements ValidatingEdi
                     entityManager.persist(entity);
                     entityManager.getTransaction().commit();
                     entityManager.detach(entity);
+                    entryEditor.discard();
+                    container.refresh();
                 } catch (final Throwable t) {
                     if (entityManager.getTransaction().isActive()) {
                         entityManager.getTransaction().rollback();
@@ -124,6 +139,30 @@ public final class EntryFlowlet extends AbstractFlowlet implements ValidatingEdi
             }
         });
 
+        final List<FieldDescriptor> fieldDescriptors = TranslationSiteFields.getFieldDescriptors(Entry.class);
+
+        final List<FilterDescriptor> filterDefinitions = new ArrayList<FilterDescriptor>();
+
+        container = new LazyEntityContainer<Entry>(entityManager, true, true, false, Entry.class, 1000,
+        new String[] {"basename", "key", "language", "country"},
+        new boolean[] {true, true, true, true}, "entryId");
+        container.getQueryView().getQueryDefinition().setMaxQuerySize(1);
+
+        ContainerUtil.addContainerProperties(container, fieldDescriptors);
+
+        final Table table = new FormattingTable();
+        final Grid grid = new Grid(table, container);
+        grid.setCaption("All Translations");
+        grid.setSizeFull();
+        grid.setFields(fieldDescriptors);
+        grid.setFilters(filterDefinitions);
+
+        table.setColumnCollapsed("entryId", true);
+        table.setColumnCollapsed("path", true);
+        table.setColumnCollapsed("created", true);
+        table.setColumnCollapsed("modified", true);
+        gridLayout.addComponent(grid, 0, 2);
+
     }
 
     /**
@@ -134,6 +173,13 @@ public final class EntryFlowlet extends AbstractFlowlet implements ValidatingEdi
     public void edit(final Entry entity, final boolean newEntity) {
         this.entity = entity;
         entryEditor.setItem(new BeanItem<Entry>(entity), newEntity);
+        container.getQueryView().getQueryDefinition().setMaxQuerySize(20);
+        container.removeAllContainerFilters();
+        container.getQueryView().addFilter(new And(
+                new Compare.Equal("path", entity.getPath()),
+                new Compare.Equal("basename", entity.getBasename()),
+                new Compare.Equal("key", entity.getKey())));
+        container.refresh();
     }
 
     @Override
