@@ -108,32 +108,37 @@ public final class TranslationSiteFields {
                 "path", "Path",
                 TextField.class, null,
                 30, null, String.class, "",
-                false, true, true));
+                true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "basename", "Basename",
                 TextField.class, null,
-                30, null, String.class, "",
-                false, true, true));
+                200, null, String.class, "",
+                true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "language", "Language",
                 TextField.class, null,
-                30, null, String.class, "",
-                false, true, true));
+                15, null, String.class, "",
+                true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "country", "Country",
                 TextField.class, null,
-                30, null, String.class, "",
-                false, true, true));
+                15, null, String.class, "",
+                true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "key", "Key",
+                TextField.class, null,
+                250, null, String.class, "",
+                true, true, true));
+        TranslationSiteFields.add(Entry.class, new FieldDescriptor(
+                "value", "Value",
                 TextField.class, null,
                 -1, null, String.class, "",
                 false, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
-                "value", "Value",
+                "author", "Author",
                 TextField.class, null,
-                200, null, String.class, "",
-                false, true, true));
+                150, null, String.class, "",
+                true, true, false));
 
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "created", "Created",

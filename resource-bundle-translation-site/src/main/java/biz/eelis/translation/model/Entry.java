@@ -75,6 +75,10 @@ public final class Entry implements Serializable {
     @Column(length = 1024, nullable = false)
     private String value;
 
+    /** Content. */
+    @Column(length = 1024, nullable = true)
+    private String author;
+
     /** Created time of the event. */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
@@ -202,6 +206,20 @@ public final class Entry implements Serializable {
      */
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    /**
+     * @return the author
+     */
+    public String getAuthor() {
+        return author;
+    }
+
+    /**
+     * @param author the author
+     */
+    public void setAuthor(final String author) {
+        this.author = author;
     }
 
     /**

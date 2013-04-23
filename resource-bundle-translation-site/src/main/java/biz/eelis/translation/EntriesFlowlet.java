@@ -25,6 +25,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import org.vaadin.addons.lazyquerycontainer.EntityContainer;
+import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 import org.vaadin.addons.sitekit.flow.AbstractFlowlet;
 import org.vaadin.addons.sitekit.grid.FieldDescriptor;
 import org.vaadin.addons.sitekit.grid.FilterDescriptor;
@@ -48,7 +49,7 @@ public final class EntriesFlowlet extends AbstractFlowlet {
     /** Serial version UID. */
     private static final long serialVersionUID = 1L;
     /** The container. */
-    private EntityContainer<Entry> container;
+    private LazyEntityContainer<Entry> container;
     /** The grid. */
     private Grid grid;
 
@@ -77,16 +78,16 @@ public final class EntriesFlowlet extends AbstractFlowlet {
                 200, "like", String.class, ""));
 
         filterDefinitions.add(new FilterDescriptor("language", "language", "Language", new TextField(),
-                30, "=", String.class, ""));
+                20, "=", String.class, ""));
 
         filterDefinitions.add(new FilterDescriptor("country", "country", "Country", new TextField(),
-                30, "=", String.class, ""));
+                20, "=", String.class, ""));
 
         filterDefinitions.add(new FilterDescriptor("key", "key", "Key", new TextField(),
                 200, "like", String.class, ""));
 
         final EntityManager entityManager = getSite().getSiteContext().getObject(EntityManager.class);
-        container = new EntityContainer<Entry>(entityManager, true, true, false, Entry.class, 1000,
+        container = new LazyEntityContainer<Entry>(entityManager, true, true, false, Entry.class, 1000,
                 new String[] {"basename", "key", "language", "country"},
                 new boolean[] {true, true, true, true}, "entryId");
 

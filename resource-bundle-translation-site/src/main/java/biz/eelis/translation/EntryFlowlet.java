@@ -98,6 +98,7 @@ public final class EntryFlowlet extends AbstractFlowlet implements ValidatingEdi
                 entityManager.getTransaction().begin();
                 try {
                     entity = entityManager.merge(entity);
+                    entity.setAuthor(getSite().getSecurityProvider().getUser());
                     entityManager.persist(entity);
                     entityManager.getTransaction().commit();
                     entityManager.detach(entity);
