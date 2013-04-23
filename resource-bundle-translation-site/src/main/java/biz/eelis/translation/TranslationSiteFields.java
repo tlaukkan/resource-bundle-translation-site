@@ -17,6 +17,7 @@ package biz.eelis.translation;
 
 import biz.eelis.translation.model.Entry;
 import com.vaadin.data.Validator;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import org.vaadin.addons.sitekit.grid.FieldDescriptor;
 import org.vaadin.addons.sitekit.grid.field.TimestampField;
@@ -131,8 +132,8 @@ public final class TranslationSiteFields {
                 true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "value", "Value",
-                TextField.class, null,
-                250, null, String.class, "",
+                TextArea.class, null,
+                400, null, String.class, "",
                 false, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "author", "Author",
