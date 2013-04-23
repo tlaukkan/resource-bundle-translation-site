@@ -155,7 +155,7 @@ public final class TranslationSiteUI extends AbstractSiteUI implements ContentPr
         viewDescriptors.add(new ViewDescriptor("master", null, null, new ViewVersion(0, null, "Master", "",
                 "This is a master view.", FixedWidthView.class.getCanonicalName(), new String[]{"admin"},
                 Arrays.asList(
-                        new ViewletDescriptor("logo", "Logo", "This is logo.", "eelis-logo-2.png",
+                        new ViewletDescriptor("logo", "Logo", "This is logo.", "logo.png",
                                 ImageViewlet.class.getCanonicalName()),
                         new ViewletDescriptor("header", "Header", "This is header.", null,
                                 CompanyHeaderViewlet.class.getCanonicalName()),
