@@ -129,11 +129,11 @@ public class TranslationSynchronizer {
                 continue;
             }
 
-            final Map<String, List<String>> missingKeys = new HashMap<>();
+            final Map<String, List<String>> missingKeys = new HashMap<String, List<String>>();
 
             for (final File candidate : bundleDirectory.listFiles()) {
-                if (!candidate.equals(baseBundle) &&
-                        candidate.getName().startsWith(baseName) && candidate.getName().endsWith(".properties")) {
+                if (!candidate.equals(baseBundle)
+                        && candidate.getName().startsWith(baseName) && candidate.getName().endsWith(".properties")) {
 
                     final String name = candidate.getName().split("\\.")[0];
                     final String[] parts = name.split("_");
@@ -167,7 +167,7 @@ public class TranslationSynchronizer {
                             query.setParameter("language", language);
                             query.setParameter("country", country);
                             final List<Entry> entries = query.getResultList();
-                            final Set<String> existingKeys = new HashSet<>();
+                            final Set<String> existingKeys = new HashSet<String>();
 
                             for (final Entry entry : entries) {
                                 if (keys.contains(entry.getKey())) {
