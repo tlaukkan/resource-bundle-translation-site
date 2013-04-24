@@ -78,10 +78,10 @@ public final class EntriesFlowlet extends AbstractFlowlet {
                 200, "like", String.class, ""));
 
         filterDefinitions.add(new FilterDescriptor("language", "language", "Language", new TextField(),
-                20, "=", String.class, ""));
+                30, "=", String.class, ""));
 
         filterDefinitions.add(new FilterDescriptor("country", "country", "Country", new TextField(),
-                20, "=", String.class, ""));
+                30, "=", String.class, ""));
 
         filterDefinitions.add(new FilterDescriptor("key", "key", "Key", new TextField(),
                 200, "like", String.class, ""));

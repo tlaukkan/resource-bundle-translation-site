@@ -37,6 +37,7 @@ import org.vaadin.addons.sitekit.util.ContainerUtil;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -112,6 +113,7 @@ public final class EntryFlowlet extends AbstractFlowlet implements ValidatingEdi
                 try {
                     entity = entityManager.merge(entity);
                     entity.setAuthor(getSite().getSecurityProvider().getUser());
+                    entity.setModified(new Date());
                     entityManager.persist(entity);
                     entityManager.getTransaction().commit();
                     entityManager.detach(entity);
