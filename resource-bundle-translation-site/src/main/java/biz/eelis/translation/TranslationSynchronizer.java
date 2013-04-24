@@ -76,21 +76,35 @@ public class TranslationSynchronizer {
     public TranslationSynchronizer(final EntityManager entityManager) {
         this.entityManager = entityManager;
 
+        final long synchronizePeriodMillis = Long.parseLong(PropertiesUtil.getProperty("translation-site",
+                "synchronize-period-millis"));
+
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                long lastTimeMillis = System.currentTimeMillis();
+                lastTimeMillis = lastTimeMillis - lastTimeMillis % synchronizePeriodMillis;
+
                 while (!shutdown) {
-                    synchronize();
-                    try {
-                        Thread.sleep(60000);
-                    } catch (final InterruptedException e) {
-                        LOGGER.debug(e);
+
+                    while (System.currentTimeMillis() < lastTimeMillis + synchronizePeriodMillis) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (final InterruptedException e) {
+                            LOGGER.debug(e);
+                            if (shutdown) {
+                                return;
+                            }
+                        }
                     }
+
+                    lastTimeMillis = System.currentTimeMillis();
+                    lastTimeMillis = lastTimeMillis - lastTimeMillis % synchronizePeriodMillis;
+                    synchronize();
                 }
             }
         });
         thread.start();
-
     }
 
     /**
