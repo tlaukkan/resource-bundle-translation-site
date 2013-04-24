@@ -96,6 +96,8 @@ public class TranslationSynchronizer {
      * Synchronizes bundles and database.
      */
     private void synchronize() {
+        entityManager.clear();
+
         final String bundleCharacterSet = PropertiesUtil.getProperty("translation-site", "bundle-character-set");
         final String[] prefixes = PropertiesUtil.getProperty("translation-site", "bundle-path-prefixes").split(",");
 
