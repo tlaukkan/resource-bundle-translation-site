@@ -33,6 +33,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -133,6 +135,7 @@ public class TranslationSynchronizer {
             }
 
             final Map<String, List<String>> missingKeys = new HashMap<String, List<String>>();
+            final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 
             for (final File candidate : bundleDirectory.listFiles()) {
                 if (candidate.getName().startsWith(baseName) && candidate.getName().endsWith(".properties")) {
@@ -163,7 +166,7 @@ public class TranslationSynchronizer {
 
                             final TypedQuery<Entry> query = entityManager.createQuery("select e from Entry as e where " +
                                     "e.path=:path and e.basename=:basename and " +
-                                    "e.language=:language and e.country=:country", Entry.class);
+                                    "e.language=:language and e.country=:country order by e.key", Entry.class);
                             query.setParameter("path", bundleDirectoryPath);
                             query.setParameter("basename", baseName);
                             query.setParameter("language", language);
@@ -219,7 +222,7 @@ public class TranslationSynchronizer {
                             entityManager.getTransaction().commit();
 
                             if (!candidate.equals(baseBundle)) {
-                                properties.clear();
+                                /*properties.clear();
                                 for (final Entry entry : entries) {
                                     if (keys.contains(entry.getKey())) {
                                         if (entry.getValue().length() > 0) {
@@ -230,7 +233,30 @@ public class TranslationSynchronizer {
 
                                 final FileOutputStream fileOutputStream = new FileOutputStream(candidate, false);
                                 properties.store(new OutputStreamWriter(fileOutputStream, bundleCharacterSet), "");
+                                fileOutputStream.close();*/
+                                final FileOutputStream fileOutputStream = new FileOutputStream(candidate, false);
+                                final OutputStreamWriter writer = new OutputStreamWriter(fileOutputStream,
+                                        bundleCharacterSet);
+                                final PrintWriter printWriter = new PrintWriter(writer);
+
+                                for (final Entry entry : query.getResultList()) {
+                                    printWriter.print("# Modified: ");
+                                    printWriter.print(format.format(entry.getModified()));
+                                    if (entry.getAuthor() != null) {
+                                        printWriter.print(" Author: ");
+                                        printWriter.print(entry.getAuthor());
+                                    }
+                                    printWriter.println();
+                                    printWriter.print(entry.getKey());
+                                    printWriter.print("=");
+                                    printWriter.println(entry.getValue());
+                                }
+
+                                printWriter.flush();
+                                printWriter.close();
                                 fileOutputStream.close();
+
+
                             }
                         } catch (Exception e) {
                             if (entityManager.getTransaction().isActive()) {
