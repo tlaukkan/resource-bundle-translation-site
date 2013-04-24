@@ -143,7 +143,7 @@ public final class TranslationSiteUI extends AbstractSiteUI implements ContentPr
         siteContext.putObject(Company.class, company);
 
         final SecurityProviderSessionImpl securityProvider = new SecurityProviderSessionImpl(
-                Arrays.asList("administrator", "user"));
+                Arrays.asList("administrator", "translator", "user"));
 
         return new Site(SiteMode.PRODUCTION, contentProvider, localizationProvider, securityProvider, siteContext);
     }
@@ -166,7 +166,7 @@ public final class TranslationSiteUI extends AbstractSiteUI implements ContentPr
                 ))));
 
         viewDescriptors.add(new ViewDescriptor("default", null, null, new ViewVersion(0, "master", "Entries", "",
-                "This is entries view.", FixedWidthView.class.getCanonicalName(), new String[]{"user", "administrator"},
+                "This is entries view.", FixedWidthView.class.getCanonicalName(), new String[]{"translator", "administrator"},
                 Arrays.asList(new ViewletDescriptor(
                         "content", "Entries Viewlet", "This is Entries viewlet.", null,
                         EntryFlowViewlet.class.getCanonicalName())
