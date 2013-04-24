@@ -27,6 +27,7 @@ import org.vaadin.addons.sitekit.util.PropertiesUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -97,6 +98,8 @@ public class TranslationSynchronizer {
      */
     private void synchronize() {
         entityManager.clear();
+
+        executeShellCommand(PropertiesUtil.getProperty("translation-site", "pre-synchronize-command-hook"));
 
         final String bundleCharacterSet = PropertiesUtil.getProperty("translation-site", "bundle-character-set");
         final String[] prefixes = PropertiesUtil.getProperty("translation-site", "bundle-path-prefixes").split(",");
@@ -286,6 +289,41 @@ public class TranslationSynchronizer {
 
         }
 
+        executeShellCommand(PropertiesUtil.getProperty("translation-site", "post-synchronize-command-hook"));
+
+    }
+
+    /**
+     * Executes requested shell command.
+     *
+     * @param cmd the shell command to execute
+     */
+    private void executeShellCommand(final String cmd) {
+        LOGGER.debug("Executing shell command: " + cmd);
+        try {
+            Runtime runtime = Runtime.getRuntime();
+            Process process = runtime.exec(new String[] {"/bin/sh", "-c", cmd});
+            process.waitFor();
+
+            String line;
+
+            BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            while ((line = error.readLine()) != null){
+                LOGGER.error(line);
+            }
+            error.close();
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while ((line = input.readLine()) != null){
+                LOGGER.info(line);
+            }
+
+            input.close();
+
+            LOGGER.debug("Executed shell command: " + cmd);
+        } catch (final Throwable t) {
+            LOGGER.error("Error executing shell command: " + cmd, t);
+        }
     }
 
     /**
