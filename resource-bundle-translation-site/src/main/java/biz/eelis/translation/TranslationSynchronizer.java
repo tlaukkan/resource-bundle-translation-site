@@ -192,7 +192,7 @@ public class TranslationSynchronizer {
                                 final String key = (String) obj;
 
                                 final String value;
-                                if (properties.containsKey(properties)) {
+                                if (properties.containsKey(key)) {
                                     value = (String) properties.get(key);
                                 } else {
                                     value = "";
@@ -224,18 +224,7 @@ public class TranslationSynchronizer {
                             entityManager.getTransaction().commit();
 
                             if (!candidate.equals(baseBundle)) {
-                                /*properties.clear();
-                                for (final Entry entry : entries) {
-                                    if (keys.contains(entry.getKey())) {
-                                        if (entry.getValue().length() > 0) {
-                                            properties.put(entry.getKey(), entry.getValue());
-                                        }
-                                    }
-                                }
 
-                                final FileOutputStream fileOutputStream = new FileOutputStream(candidate, false);
-                                properties.store(new OutputStreamWriter(fileOutputStream, bundleCharacterSet), "");
-                                fileOutputStream.close();*/
                                 final FileOutputStream fileOutputStream = new FileOutputStream(candidate, false);
                                 final OutputStreamWriter writer = new OutputStreamWriter(fileOutputStream,
                                         bundleCharacterSet);
