@@ -118,12 +118,12 @@ public final class TranslationSiteFields {
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "language", "Language",
                 TextField.class, null,
-                25, null, String.class, "",
+                30, null, String.class, "",
                 true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "country", "Country",
                 TextField.class, null,
-                25, null, String.class, "",
+                30, null, String.class, "",
                 true, true, true));
         TranslationSiteFields.add(Entry.class, new FieldDescriptor(
                 "key", "Key",
