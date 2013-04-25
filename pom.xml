@@ -47,6 +47,7 @@
 
     <modules>
         <module>resource-bundle-translation-site</module>
+        <module>translation-site-jetty</module>
     </modules>
 
 </project>

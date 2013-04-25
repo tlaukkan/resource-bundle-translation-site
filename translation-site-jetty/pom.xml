@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>biz.eelis</groupId>
-    <artifactId>resource-bundle-translation-site</artifactId>
+    <artifactId>translation-site-jetty</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0</version>
-    <name>resource-bundle-translation-site</name>
+    <name>translation-site-jetty</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,15 +41,20 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                </configuration>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-javadocs</id>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -58,14 +63,16 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifestEntries>
-                            <Implementation-Title>Resource Bundle Translation Site</Implementation-Title>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                            <Vaadin-Package-Version>1</Vaadin-Package-Version>
-                        </manifestEntries>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>biz.eelis.translation.TranslationSiteUI</mainClass>
+                        </manifest>
                     </archive>
+                    <finalName>translation-site-jetty</finalName>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 
@@ -84,9 +91,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.vaadin.addons.sitekit</groupId>
-            <artifactId>vaadin-sitekit</artifactId>
-            <version>1.1.0</version>
+            <groupId>biz.eelis</groupId>
+            <artifactId>resource-bundle-translation-site</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
