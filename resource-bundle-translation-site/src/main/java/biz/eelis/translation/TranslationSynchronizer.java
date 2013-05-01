@@ -257,7 +257,8 @@ public class TranslationSynchronizer {
                                     printWriter.println();
                                     printWriter.print(entry.getKey());
                                     printWriter.print("=");
-                                    printWriter.println(entry.getValue());
+                                    final String value = entry.getValue().replace("\n", "\\\n");
+                                    printWriter.println(value);
                                 }
 
                                 printWriter.flush();
